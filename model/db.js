@@ -5,9 +5,9 @@ function getDB() {
     const pool = mariadb.createPool({
       host: "127.0.0.1",
       user: "root",
-      port: "3306",
-      password: "12345",
-      database: "mydb",
+      port: "13306",
+      password: "5045",
+      database: "web_week",
       connection: 5,
     });
     if (pool) {
@@ -19,7 +19,6 @@ function getDB() {
   } catch (err) {
     console.log(err);
   }
-  return pool;
 }
 
-module.exports = getDB();
+module.exports = getDB;

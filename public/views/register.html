@@ -15,6 +15,7 @@
       </div>
       <div class="userId-box">
         <label for="userId">아이디: </label>
+        <div class="alert-comment"></div>
         <input type="text" id="userId" name="userId" />
       </div>
       <div class="userPwd-box">
@@ -36,28 +37,49 @@
       <button type="submit">회원가입</button>
     </form>
     <script>
-      const registerBox = document.querySelector(".register-box");
-
-      const inputUserName = document.querySelector("#userName");
-      inputUserName.addEventListener("focusout", function () {
-        const userName = this.value;
+      // js 정규표현식 메서드 match, replace, split, test, exec
+      const idValidation = (str) => {
+        const isUserId = /^[a-z\d]{5,20}$/g.exec(str);
+        if (!isUserId) {
+          return false;
+        }
+        return true;
+      };
+      const inputUserId = document.querySelector("#userId");
+      inputUserId.addEventListener("focusout", function () {
+        const user_id = this.value;
         console.log("포커스 아웃", this.value);
-        const data = fetch("/register", {
+        if (user_id.trim().length === 0) {
+          document.querySelector(".alert-comment").innerText =
+            "필수 입력란 입니다";
+          return;
+        } else if (!idValidation(user_id)) {
+          document.querySelector(".alert-comment").innerText =
+            "영문(소문자)숫자, 5~20자리로 작성해주세요";
+          return;
+        }
+        const data = fetch("/register/userName", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ userName }),
-        });
+          body: JSON.stringify({ user_id }),
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            document.querySelector(".alert-comment").innerText = res.message;
+            console.log(res.message);
+          });
       });
 
+      const registerBox = document.querySelector(".register-box");
       registerBox.addEventListener("submit", (e) => {
         e.preventDefault();
         const formData = {
-          userName: document.querySelector("#userName").value,
-          userId: document.querySelector("#userId").value,
-          userPwd: document.querySelector("#userPwd").value,
-          userAddr: document.querySelector("#userAddr").value,
-          userPhone: document.querySelector("#userPhone").value,
-          userEmail: document.querySelector("#userEmail").value,
+          user_name: document.querySelector("#userName").value,
+          user_id: document.querySelector("#userId").value,
+          user_pwd: document.querySelector("#userPwd").value,
+          user_addr: document.querySelector("#userAddr").value,
+          user_phone: document.querySelector("#userPhone").value,
+          user_email: document.querySelector("#userEmail").value,
         };
         console.log(JSON.stringify(formData));
         const data = fetch("/register", {
